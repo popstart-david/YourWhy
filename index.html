@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundation 1 — Your Why | Popstart</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── PART A: CSS ─────────────────────────────────────────────────────── */
+:root {
+  --navy:       #1F3A5F;
+  --teal:       #2EA3A6;
+  --amber:      #C97B2B;
+  --green:      #2E8B57;
+  --red:        #C0392B;
+  --blue:       #2E6FA3;
+  --bg:         #F7F8FA;
+  --surface:    #FFFFFF;
+  --border:     #D1D5DB;
+  --text:       #1A1A2E;
+  --text-light: #6B7280;
+  --purple:     #6B4FA0;
+  --purple-bg:  #F3EFF9;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--bg);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── TOPBAR ── */
+#topbar {
+  background: var(--navy);
+  color: #fff;
+  padding: 0 20px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--teal);
+}
+#topbar .brand {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--teal);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  margin-right: 8px;
+}
+#topbar .agent-title {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+}
+#topbar .profile-fields {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+#topbar select, #topbar input[type="text"] {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+}
+#topbar select option { background: var(--navy); color: #fff; }
+#topbar input[type="text"]::placeholder { color: rgba(255,255,255,0.45); }
+#topbar input[type="text"] { width: 130px; }
+#topbar label { font-size: 11px; color: rgba(255,255,255,0.55); white-space: nowrap; }
+.profile-field-group { display: flex; align-items: center; gap: 5px; }
+
+/* ── MAIN LAYOUT ── */
+#main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── CHAT PANE ── */
+#chat-pane {
+  width: 420px;
+  min-width: 420px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#chat-messages::-webkit-scrollbar { width: 5px; }
+#chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* chat bubbles */
+.bubble {
+  max-width: 88%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  line-height: 1.55;
+  font-size: 13.5px;
+}
+.bubble.bot {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.bubble.user {
+  background: var(--navy);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.bubble.coach {
+  background: #FFF8EF;
+  border: 2px solid var(--amber);
+  align-self: flex-start;
+  max-width: 95%;
+}
+.coach-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.hint-line {
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: 5px;
+}
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 10px 13px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  width: 52px;
+}
+.typing-indicator span {
+  width: 6px; height: 6px;
+  background: var(--text-light);
+  border-radius: 50%;
+  animation: bounce 1.2s infinite;
+}
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); }
+  30% { transform: translateY(-5px); }
+}
+
+/* ── CHAT INPUT AREA ── */
+#chat-input-area {
+  border-top: 1px solid var(--border);
+  padding: 12px 14px;
+  background: var(--surface);
+}
+#chat-input-area.hidden { display: none; }
+.input-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+#user-text {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 13.5px;
+  resize: none;
+  outline: none;
+  min-height: 40px;
+  max-height: 120px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s;
+}
+#user-text:focus { border-color: var(--teal); background: #fff; }
+#send-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 16px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, opacity 0.15s;
+  height: 40px;
+}
+#send-btn:hover { background: #259699; }
+#send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* gate buttons */
+.gate-btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.gate-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.gate-btn.yes { border-color: var(--teal); color: var(--teal); }
+.gate-btn.yes:hover { background: var(--teal); color: #fff; }
+.gate-btn.no { border-color: var(--text-light); color: var(--text-light); }
+.gate-btn.no:hover { background: var(--bg); }
+
+/* ── CANVAS PANE ── */
+#canvas-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#canvas-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 20px;
+  gap: 0;
+  flex-shrink: 0;
+}
+.tab-btn {
+  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-light);
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--navy); border-bottom-color: var(--teal); font-weight: 600; }
+
+#canvas-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+#canvas-content::-webkit-scrollbar { width: 5px; }
+#canvas-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* tab panels */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── YOUR ANSWERS PANEL ── */
+#panel-answers .answers-empty {
+  color: var(--text-light);
+  font-style: italic;
+  font-size: 13px;
+  margin-top: 20px;
+}
+.answer-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--bg);
+}
+.answer-label { font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; }
+.answer-value { font-size: 13.5px; color: var(--text); line-height: 1.5; }
+
+/* ── CARDS PANEL ── */
+#panel-cards .cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  transition: border-color 0.3s;
+}
+.card-item.populated { border-color: var(--teal); }
+.card-item.flash { animation: cardFlash 0.6s ease-out; }
+@keyframes cardFlash {
+  0% { background: #E6F7F7; border-color: var(--teal); }
+  100% { background: var(--surface); }
+}
+.card-num { font-size: 10px; font-weight: 700; color: var(--text-light); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.card-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+.card-value { font-size: 13px; color: var(--text); line-height: 1.45; }
+.card-placeholder { display: flex; flex-direction: column; gap: 5px; }
+.placeholder-bar {
+  height: 10px; border-radius: 4px; background: var(--bg);
+  border: 1px solid var(--border);
+}
+.placeholder-bar.short { width: 55%; }
+.placeholder-bar.medium { width: 80%; }
+.placeholder-bar.long { width: 100%; }
+
+/* ── DELIVERABLE PANEL ── */
+#panel-deliverable {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.deliverable-header {
+  margin-bottom: 28px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+.deliverable-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+}
+.deliverable-subtitle {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+.deliverable-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--text-light);
+  font-style: italic;
+  font-size: 14px;
+  gap: 8px;
+}
+.deliverable-placeholder svg { opacity: 0.3; }
+
+/* Zone layout */
+.zone {
+  margin-bottom: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.zone-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--navy);
+  color: #fff;
+}
+.zone-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.zone-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+.zone-body { padding: 18px 20px; }
+
+/* Zone 1 — chips */
+.zone1-intro {
+  font-size: 13px;
+  color: var(--text-light);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 4px;
+}
+.chip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+}
+.chip.anchor {
+  background: #EEF7F7;
+  border-color: var(--teal);
+  color: var(--navy);
+  font-style: italic;
+}
+
+/* Zone 1 synthesis paragraph */
+.zone1-para { font-size: 14px; line-height: 1.7; margin-bottom: 14px; color: var(--text); }
+
+/* Zone 2 — Statement template */
+.why-statement-block {
+  background: #F0F7FF;
+  border-left: 4px solid var(--navy);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.why-statement-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.why-statement-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.6;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.what-got-us-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 8px;
+  margin-top: 16px;
+}
+.what-got-us-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+}
+.what-got-us-bullet {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal);
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.what-got-us-text { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+
+/* Conditional flags */
+.conditional-flag {
+  background: #FFF8EF;
+  border: 1px solid var(--amber);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 13px;
+  color: #7A4A16;
+  line-height: 1.5;
+  margin-top: 14px;
+}
+.conditional-flag-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+/* Zone 3 — Narrative Anchors */
+.narrative-anchor-block {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: var(--bg);
+}
+.narrative-anchor-block:last-child { margin-bottom: 0; }
+.anchor-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.anchor-name::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex-shrink: 0;
+}
+.anchor-connection { font-size: 13.5px; color: var(--text); line-height: 1.6; font-style: italic; }
+
+/* Zone 4 — Coach Moment */
+.coach-moment-block {
+  border-left: 4px solid var(--purple);
+  background: var(--purple-bg);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.coach-moment-block:last-child { margin-bottom: 0; }
+.coach-moment-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--purple);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.coach-moment-q { font-size: 13.5px; color: var(--text); line-height: 1.6; font-style: italic; }
+.coach-moment-source { font-size: 11px; color: var(--text-light); margin-top: 6px; }
+
+/* Zone 5 — What's Next */
+.zone5-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.zone5-col-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 10px;
+}
+.action-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+}
+.action-num {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.action-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+.forward-bridge-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 13px 14px;
+}
+.forward-bridge-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 5px;
+}
+.forward-bridge-text { font-size: 13px; color: var(--text); line-height: 1.55; }
+
+/* Terms to Know */
+.terms-section { margin-top: 8px; }
+.terms-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin-bottom: 10px;
+}
+.term-row {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg);
+  align-items: flex-start;
+}
+.term-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  min-width: 110px;
+  flex-shrink: 0;
+}
+.term-def { font-size: 13px; color: var(--text); line-height: 1.5; }
+
+/* Boundaries block */
+.boundaries-block {
+  border-left: 4px solid var(--amber);
+  border-radius: 0 8px 8px 0;
+  background: #FFFBF5;
+  padding: 14px 18px;
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+.boundaries-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--amber);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+.boundaries-text { font-size: 13px; color: var(--text); line-height: 1.65; }
+
+/* authored-answer pill for Coach Mode */
+.authored-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #EEF7F7;
+  border: 1px solid var(--teal);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--navy);
+  cursor: pointer;
+  transition: background 0.15s;
+  margin: 3px 2px;
+}
+.authored-pill:hover { background: var(--teal); color: #fff; }
+.authored-pills-row { margin-top: 8px; display: flex; flex-wrap: wrap; }
+
+/* start button */
+#start-btn {
+  display: block;
+  margin: 16px auto 0;
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 32px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+#start-btn:hover { background: #259699; }
+
+/* responsive scroll for long content */
+#panel-deliverable { padding-bottom: 32px; }
+
+/* coach topic buttons */
+.coach-topic-btn {
+  width: 100%;
+  text-align: left;
+  padding: 9px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  color: var(--text);
+  margin-bottom: 6px;
+  transition: all 0.15s;
+}
+.coach-topic-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-bg); }
+.coach-topics-label { font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="brand">POPSTART</span>
+  <span class="agent-title">Foundation 1 — Your Why</span>
+  <div class="profile-fields">
+    <div class="profile-field-group">
+      <label for="sel-stage">Stage</label>
+      <select id="sel-stage">
+        <option value="Just Exploring">Just Exploring</option>
+        <option value="Pre-Launch">Pre-Launch</option>
+        <option value="Early Stage">Early Stage</option>
+        <option value="Growth">Growth</option>
+        <option value="Established">Established</option>
+      </select>
+    </div>
+    <div class="profile-field-group">
+      <label for="sel-type">Business Type</label>
+      <select id="sel-type">
+        <option value="Service">Service</option>
+        <option value="Product">Product</option>
+        <option value="SaaS">SaaS</option>
+        <option value="Marketplace">Marketplace</option>
+        <option value="Non-profit">Non-profit</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="profile-field-group">
+      <label for="sel-geo">Geo Scope</label>
+      <select id="sel-geo">
+        <option value="Local">Local</option>
+        <option value="Regional">Regional</option>
+        <option value="National">National</option>
+        <option value="International">International</option>
+      </select>
+    </div>
+    <div class="profile-field-group">
+      <label for="inp-industry">Industry</label>
+      <input type="text" id="inp-industry" placeholder="e.g. Health & Wellness">
+    </div>
+    <div class="profile-field-group" style="margin-left:8px;border-left:1px solid rgba(255,255,255,0.2);padding-left:12px;">
+      <label for="inp-apikey">API Key</label>
+      <input type="password" id="inp-apikey" placeholder="sk-ant-…" style="width:160px;">
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div id="main">
+
+  <!-- CHAT PANE -->
+  <div id="chat-pane">
+    <div id="chat-messages">
+      <div style="text-align:center; padding: 30px 10px 10px;">
+        <div style="font-size:13px; color:var(--text-light); margin-bottom:16px;">Set your profile above, then begin.</div>
+        <button id="start-btn">Start Conversation</button>
+      </div>
+    </div>
+    <div id="chat-input-area" class="hidden">
+      <div class="input-row">
+        <textarea id="user-text" rows="1" placeholder="Type your response…"></textarea>
+        <button id="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CANVAS PANE -->
+  <div id="canvas-pane">
+    <div id="canvas-tabs">
+      <button class="tab-btn" data-tab="answers">Your Answers</button>
+      <button class="tab-btn active" data-tab="cards">Your Why Statement</button>
+      <button class="tab-btn" data-tab="deliverable">Deliverable</button>
+    </div>
+    <div id="canvas-content">
+
+      <!-- YOUR ANSWERS -->
+      <div id="panel-answers" class="tab-panel">
+        <div class="answers-empty" id="answers-empty">Conversation hasn't started yet.</div>
+        <div id="answers-list"></div>
+      </div>
+
+      <!-- CARDS -->
+      <div id="panel-cards" class="tab-panel active">
+        <div class="cards-grid" id="cards-grid">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <!-- DELIVERABLE -->
+      <div id="panel-deliverable" class="tab-panel">
+        <div class="deliverable-placeholder" id="deliverable-placeholder">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+          </svg>
+          Complete the conversation to generate your Why Statement.
+        </div>
+        <div id="deliverable-content" style="display:none;"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   PART B — DATA LAYER
+   Synthesis agent — Foundation 1: Your Why
+   ══════════════════════════════════════════════════════════════ */
+
+// ── Stage openings verbatim from §1.5 ──────────────────────────
+const STAGE_OPENINGS = {
+  'Just Exploring': "What's been pulling at you toward starting something of your own? Doesn't need to be specific yet — just whatever's been on your mind.",
+  'Pre-Launch':     "What's the story behind why you're building this? Could be something that happened, or just something that's been true for you for a while.",
+  'Early Stage':    "What's the story behind why you started this? And — does that reason still feel true now that you're actually doing it?",
+  'Growth':         "Going back to why you started this — what's the story there? I'm curious whether that's still what's driving you, or whether something's shifted as things have grown.",
+  'Established':    "You've been doing this for a while now — long enough that the original reason you started might feel like a distant memory, or it might still be exactly what drives you. I'm curious: when you go back to why you actually built this, what's the honest answer?"
+};
+
+// ── No redirect stages or fold stages for this agent ──────────
+const REDIRECT_STAGES = [];
+const FOLD_STAGES     = {};
+
+// ── Confirmation gate — all steps verbatim from §7 ───────────
+const CONFIRMATION_GATE = {
+  presentDraft:     "Does this feel true, or does something feel off?",
+  yesPath:          "Your Why Statement is ready. Take a look — and if anything comes up as you read it, I'm here.",
+  noPath:           "What doesn't feel right — is it the wording, or does something feel off about the substance?",
+  clarifyConfirm:   "How does this version feel?",
+  loopEscalationFlag: "This Why Statement is a working draft. The conversation surfaced the direction but not the final form — revisit when something sharper comes to mind.",
+  minimalInputFlag:   "This Why Statement is a starting point — built from a single answer rather than a full conversation. It's worth revisiting once you've had more time to sit with it."
+};
+
+// ── Need signals from §3.2 ─────────────────────────────────────
+const NEED_SIGNALS = {
+  autonomy: {
+    patterns: ['my way','tired of someone else','wanted control','own decisions','no one telling','be my own boss','freedom to'],
+    reflect: "It sounds like control over how you work matters a lot to you — is that part of it?"
+  },
+  competence: {
+    patterns: ["good at this","no one else was doing","saw how it should","couldn't watch","done wrong","better way","no one was solving","built the thing"],
+    reflect: "It sounds like you saw a standard that wasn't being met — and you were the one who could meet it. Is that close?"
+  },
+  relatedness: {
+    patterns: ['help people','my family','my community','people like','been through','went through','for my','for them','for her','for him','people who','someone specific','dedicated to'],
+    reflect: "Slow down here — it sounds like this is for someone specific. Tell me more about them."
+  }
+};
+
+// ── Gap library verbatim from §12.1 ───────────────────────────
+const GAP_LIBRARY = {
+  thinInput: [
+    {
+      trigger: ['make money','financial','income','revenue','profit'],
+      response: "That makes sense — most people do. What I'm trying to understand is what specifically is pulling you toward this particular business. Is there something about this one that goes beyond the income?"
+    },
+    {
+      trigger: ['good opportunity','saw an opportunity','gap in the market','market gap'],
+      response: "That's a solid starting point — what made you the one to go after it? What is it about you that makes this the right fit?"
+    },
+    {
+      trigger: ['my own boss','be my own boss','work for myself','own schedule'],
+      response: "That's real — a lot of people feel that way. What is it about working for yourself that matters most to you? Is it the freedom, the control over what you build, something else?"
+    },
+    {
+      trigger: ["don't know","not sure","just felt right","felt right"],
+      response: "That instinct is worth paying attention to. When you think about when it first felt right — was there a specific moment, or was it more of a slow realization?"
+    },
+    {
+      trigger: ["built the thing","thing that didn't exist","didn't exist","wasn't out there"],
+      response: "That's a solid starting point — what made you the one to go after it? A lot of people saw the same gap."
+    }
+  ],
+  hallucinationTriggers: [
+    {
+      id: 'write_me_why',
+      trigger: ['just write','write me a why','give me a why statement','write my why','write it for me'],
+      firstPush:  "I could write something, but it would be about a generic business — not yours. The whole point is that it comes from what you actually tell me. Let's take two minutes and I'll draft it from your real words.",
+      secondPush: "I hear you — and I genuinely can't give you a number, because anything I'd say would be invented. What I can do is point you toward the right place: once you're through the foundations, there's an agent that builds a real financial forecast from your actual inputs. That's where this conversation leads."
+    },
+    {
+      id: 'evaluate_my_why',
+      trigger: ["here's my why","is it good","evaluate my why","rate my why","what do you think of my why"],
+      firstPush:  "This is a strong start — does it feel like the real reason, or more like how you'd describe it to an investor?",
+      secondPush: "I can tell you whether it sounds like a real reason or a polished one — but I can't tell you if it's the right Why. That's yours to decide. What I heard just now was [their statement]. Does that feel close?"
+    },
+    {
+      id: 'standard_why',
+      trigger: ['what should my why be','standard why','typical why','why for a','template for','formula for'],
+      firstPush:  "There's no standard Why for a [type of business] — it comes from you, not the category. What I can do is help you find yours. What's the thing that keeps you coming back to this idea?",
+      secondPush: "Still true — there's no template for this. What I can do is ask you one question and draft from whatever you give me. In one sentence: what's the thing that keeps you coming back to this idea?"
+    },
+    {
+      id: 'revenue_prediction',
+      trigger: ['revenue','year five','year 5','financial forecast','how much will i make','what will my revenue be'],
+      firstPush:  "That's not something I can answer — revenue depends on execution, market conditions, and decisions that have nothing to do with your Why Statement. What I can tell you is that your Why is what you use when a decision looks good on paper but feels wrong. If you want to build a financial forecast, that's a different conversation — and I can help you get there.",
+      secondPush: "I hear you — and I genuinely can't give you a number, because anything I'd say would be invented. What I can do is point you toward the right place: once you're through the foundations, there's an agent that builds a real financial forecast from your actual inputs. That's where this conversation leads."
+    }
+  ],
+  edgeCases: {
+    refusesToEngage:      "In one sentence, what's the most important thing about why you're doing this?",
+    polishedBrandTest:    "That sounds like how you'd describe it to a reporter — if you were just telling a close friend why you're really doing this, how would you say it?",
+    emotionallyLoaded:    "That's a real reason — thank you for sharing that.",
+    exercisePushbackGeneral: "It's a fair question. At your stage, every decision — who to hire, what to build, what to say no to — gets easier when you know why you're doing this. It doesn't have to be perfect today. Let's just see what comes up.",
+    exercisePushbackGrowth:  "It's a fair question. At your stage, the Why matters in a specific way — it's what tells you which margin trade-offs are worth making, which hires fit, and whether the business you're building toward exit is the one you actually want to sell. It doesn't have to be perfect today. Let's just see what comes up.",
+    exercisePushbackGrowth2: "Fair enough — in one sentence, what's the most important thing about why you're doing this?"
+  }
+};
+
+// ── Coach Mode topics from §2.5 ────────────────────────────────
+const COACH_TOPICS = [
+  {
+    label:    "What my Why means for decisions",
+    keywords: ["decisions","choices","trade-offs","priorities","filter","saying no"],
+    answer:   "Your Why Statement isn't a slogan — it's a decision filter. When two options look equal on paper, the one that's more consistent with [WHY_STATEMENT_SUMMARY] is the right one. Founders who can name their Why make faster decisions at exactly the moments when speed matters most: hiring, pricing, what to build next. The question to keep asking isn't 'is this a good opportunity' — it's 'is this consistent with why I'm doing this?' Those are different questions. They produce different answers."
+  },
+  {
+    label:    "Whether my Why is strong enough",
+    keywords: ["strong","real","good enough","weak","doubt","valid","counts","matters"],
+    answer:   "There's no minimum length and no required emotion level for a Why Statement. What makes it strong is whether it's traceable to something you actually said — a specific person, a real moment, a pattern in your own life. Generic Whys aren't wrong — they're incomplete. The test is simple: if the business got hard — really hard — would [WHY_STATEMENT_SUMMARY] be enough to keep you going? If the honest answer is yes, it's strong enough. If it isn't, the conversation has more to give."
+  },
+  {
+    label:    "How my Why connects to what comes next",
+    keywords: ["next steps","end game","mission","vision","what's next","foundation","plan"],
+    answer:   "Your Why is the first foundation because it's load-bearing. Foundation 2 — End Game — will ask what success looks like. Your answer will be more specific because you now know why you're doing this. Foundation 3 — Mission — will ask what your business does and who it serves. The Why you just built is what keeps the Mission from sounding generic. Every foundation after this one is easier when it's traceable back to [WHY_STATEMENT_SUMMARY]."
+  },
+  {
+    label:    "Revisiting or changing my Why",
+    keywords: ["change","update","revise","different","wrong","shifted","not right anymore"],
+    answer:   "A Why Statement can change — especially for founders who've been operating for a while. What usually happens isn't that the Why was wrong; it's that the first version was the surface answer, and a deeper one has emerged. If something about [WHY_STATEMENT_SUMMARY] no longer feels true, that's worth examining rather than ignoring. The clarification loop in this conversation can handle one revision cycle. If the Why needs a deeper revisit, that's a signal to return to this foundation — not to force a new statement from what's in front of you right now."
+  }
+];
+
+// ── Coach Moment library from §8.1 ────────────────────────────
+const COACH_MOMENT_LIBRARY = {
+  stageQ1: {
+    'Just Exploring': {
+      q: "What would have to be true for you to know, six months from now, that the thing pulling you toward this was real and not just a reaction to where you are right now?",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — distinguishing intrinsic motivation from situational escape."
+    },
+    'Pre-Launch': {
+      q: "You're close to launching. If the business got hard in the first six months — not failed, just hard — would the reason you just named be enough to keep you going? What would that look like?",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — intrinsic motivation predicts sustained effort under difficulty."
+    },
+    'Early Stage': {
+      q: "Now that you're actually running this — are the decisions you're making day to day consistent with the reason you just named? Or is there a specific place where the operational weight has pulled you away from it?",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — intrinsic motivation erodes under sustained extrinsic pressure without conscious realignment."
+    },
+    'Growth': {
+      q: "At your stage, decisions about channels, partners, and scale affect whether the standard in your Why Statement holds or gets quietly compromised. Is there a specific decision in front of you right now where those two things are in tension?",
+      source: "Sinek — Start with Why. The Golden Circle breaks when distribution decisions are made independently of Why."
+    },
+    'Established': {
+      q: "You've been doing this long enough that the business has its own momentum now. When you go back to what you named today — does the way you're actually running this still reflect it? And if something has drifted, do you know when it happened?",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — purpose that sustained early-stage effort may require conscious recommitment at scale."
+    }
+  },
+  gapQ2: [
+    {
+      priority: 1,
+      condition: (S) => !S.relatednessNamed && (S.stage === 'Just Exploring' || S.stage === 'Pre-Launch'),
+      q: "Before you build anything, it's worth spending an hour with two or three people who match the person you described today — not to pitch them, just to understand what that experience actually looks like from their side. What do you think you'd hear?",
+      source: "Sinek — Start with Why. Purpose becomes durable when confirmed through contact with the people it's for, not just held as an idea."
+    },
+    {
+      priority: 2,
+      condition: (S) => S.distributionTension && (S.stage === 'Growth' || S.stage === 'Established'),
+      q: "At your stage, decisions about channels, partners, and scale affect whether the standard in your Why Statement holds or gets quietly compromised. Is there a specific decision in front of you right now where those two things are in tension?",
+      source: "Sinek — Start with Why. The Golden Circle breaks when distribution decisions are made independently of Why."
+    },
+    {
+      priority: 3,
+      condition: (S) => S.exitGoalNamed && S.stage === 'Growth',
+      q: "You're building toward something — whether that's exit, scale, or something else. Is the business you're building for that goal the same business you built because of what you named today? If yes, those goals reinforce each other. If not, that tension will surface before you expect it.",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — intrinsic motivation and extrinsic goals can coexist but require conscious alignment as the business scales."
+    },
+    {
+      priority: 4,
+      condition: (S) => S.twoTemporalLayers && S.stage === 'Established',
+      q: "You named two layers today — what drove you to start and what drives you now. If those two things have shifted, it's worth asking: has the business shifted with them, or is it still running on the original version?",
+      source: "Sinek — Start with Why. An evolved Why that the business hasn't caught up to creates misalignment that shows up in culture, hiring, and product decisions before it shows up in the numbers."
+    },
+    {
+      priority: 5,
+      condition: (S) => S.driftDetected && (S.stage === 'Early Stage' || S.stage === 'Established'),
+      q: "Now that you're actually running this — are the decisions you're making day to day consistent with the reason you just named? Or is there a specific place where the operational weight has pulled you away from it?",
+      source: "Self-Determination Theory (Ryan & Deci, 2000) — intrinsic motivation erodes under sustained extrinsic pressure without conscious realignment."
+    }
+  ],
+  fallback: {
+    q: "Your Why Statement is built and it held up. The question worth keeping is this: a year from now, will the decisions you made this week still be consistent with what you named today?",
+    source: "Self-Determination Theory (Ryan & Deci, 2000) — intrinsic motivation requires periodic recommitment, not one-time declaration."
+  }
+};
+
+// ── §12.2 System Prompt Boundaries — verbatim ─────────────────
+// (Informs the API system prompt; reproduced here for parity)
+const SYSTEM_PROMPT_BOUNDARIES = "You are a Synthesis agent. Your job is to help the founder find and articulate the genuine personal reason this business exists for them. You listen more than you ask. You do not move to drafting until something with real weight has surfaced. You draft using the founder's own language — not language that sounds impressive or professional. You do not produce a Why Statement without a real conversation. You do not tell the founder what their Why should be. You do not name the SDT framework to the founder. When you see relatedness — a specific person, a community, a family member — you slow down and follow it. When you see a polished answer, you test it gently once. When the founder is stuck, you offer a scaffold once and nothing more. You do not produce revenue projections, legal conclusions, or predictions tied to the Why Statement. When a hallucination trigger fires a second time, you hold the same boundary with a different response — you do not repeat yourself and you do not cave. Your goal is a statement the founder recognizes as their own thinking made visible.";
+
+// ── Glossary Terms to Know from §9.3 ──────────────────────────
+const TERMS_TO_KNOW = {
+  'Just Exploring': [
+    { term: 'Why',        def: 'The emotional engine behind a business — the personal motivation that sustains the founder through challenges. The same as purpose, used interchangeably in Popstart content.' },
+    { term: 'Purpose',    def: 'The personal driver behind starting and continuing a business. The same as the founder\'s "why" — the emotional engine that sustains the work.' },
+    { term: 'Just Exploring', def: 'The business stage you\'re in right now. It means you have an idea or a pull toward something, but no operating business yet. That\'s not a problem — it\'s a starting point. Everything you do at this stage is about testing whether the idea deserves to become a business.' },
+    { term: 'Foundation',  def: 'The ten core building blocks of a Popstart business. Each one produces a single output you\'ll use in every other part of your business. Your Why is Foundation 1 because every later foundation gets stronger when it\'s traceable back to a real reason.' }
+  ],
+  'Pre-Launch': [
+    { term: 'Why',        def: 'The emotional engine behind a business — the personal motivation that sustains the founder through challenges. The same as purpose, used interchangeably in Popstart content.' },
+    { term: 'Purpose',    def: 'The personal driver behind starting and continuing a business. The same as the founder\'s "why" — the emotional engine that sustains the work.' },
+    { term: 'Pre-Launch', def: 'The stage you\'re in right now. You have a business plan and you\'re about to launch, but you haven\'t started selling yet. Every decision you make at this stage is harder to change after you\'re operating — so this is the moment to stress-test assumptions before they become commitments.' },
+    { term: 'End Game',   def: 'The personal definition of success when a business is fully operational. Common end games include selling, keeping for recurring income, stepping back, or passing down.' }
+  ]
+};
+
+// ── Forward bridge lines from §9.2 ────────────────────────────
+const FORWARD_BRIDGES = {
+  'Just Exploring': "Foundation 2 — End Game. Your Why tells you who this is for and why it matters. End Game asks a different question: what does success actually look like for you? Not for the business in the abstract — for you specifically. That's the next conversation.",
+  'Pre-Launch':     "Foundation 2 — End Game. You're close to launching. Your Why is what you use when the options look equal. End Game will ask what the business needs to look like when it's done — and whether the path you're on points there. Run it before you make any major pre-launch commitments.",
+  'Early Stage':    "Foundation 2 — End Game. You're in it now. Your Why is the thread — End Game is where you connect it to where you want this to go from here. The next conversation will ask what success looks like given what you named today.",
+  'Growth':         "Foundation 2 — End Game. You want to build toward something — exit, scale, or something else. End Game will ask whether the business you're building for that goal is the same business you built because of what you named today. That's a different question from 'what multiple can I get.' The two questions have to align.",
+  'Established':    "Foundation 2 — End Game. A Why that still holds after years of building is more durable than one that was never tested. End Game will ask whether the business you've built still reflects it — and what to do if the answer is complicated."
+};
+
+// ── Zone 5 Action 2 stage-specific actions from §9.1 ──────────
+const STAGE_ACTIONS = {
+  'Just Exploring': "Write down the names of two or three people you've informally helped or served in the area your Why points toward. Not to contact them — to see them on paper and notice whether they have anything in common with the person named in your conversation today.",
+  'Pre-Launch':     "Put a number on what success means in year five — not a pitch, just for your own reference. Foundation 2 (End Game) will build on it.",
+  'Early Stage':    "Identify the one operational decision made in the last 30 days that most directly tested the Why you named today. Document whether the decision held the line or drifted from it. Not for anyone else — for your own record.",
+  'Growth':         "Document the specific standard or line your Why Statement describes — the thing you've already held under pressure. That documentation becomes the written version of the standard, which partners, hires, and eventually exit buyers will want to see.",
+  'Established':    "Return to the Why Statement in 30 days and ask one question: has anything about how the business is running changed since today? Not a full revisit — a single honest check against what was named in this conversation."
+};
+
+// ── State ──────────────────────────────────────────────────────
+const S = {
+  stage:            '',
+  businessType:     '',
+  geoScope:         '',
+  industry:         '',
+  conversationTurns: [],
+  whyStatement:     '',
+  whatGotUsHere:    [],     // array of {text, isQuote}
+  primaryAnchor:    '',
+  primaryConnection:'',
+  secondAnchor:     '',
+  secondConnection: '',
+  needSignal:       '',     // 'autonomy' | 'competence' | 'relatedness'
+  inputType:        '',     // 'memory' | 'present'
+  clarifyCount:     0,
+  loopEscalated:    false,
+  minimalInput:     false,
+  generated:        false,
+  // gap tracking
+  relatednessNamed:    false,
+  distributionTension: false,
+  exitGoalNamed:       false,
+  twoTemporalLayers:   false,
+  driftDetected:       false,
+  // §5.2 conditional chip fields — sourced from conversation
+  quantContext:        '',   // e.g. "$40k in pre-orders", "launching in 3 weeks" — Pre-Launch+
+  secondaryDetail:     '',   // supporting detail that shaped conversation (channel, team size, etc.)
+  founderUncertainty:  '',   // named uncertainty/fear — JE only, surfaced explicitly
+  // §9.1 forward-looking tension for Action 3
+  forwardTension:      '',   // specific forward tension that Foundation 2 will address
+  // hallucination boundary tracking
+  hallucinationFired:  {},  // {triggerId: true}
+  // engagement probes
+  relatednessProbeShown: false,
+  polishTestShown:       false,
+  // exercise pushback
+  pushbackCount:         0,
+  // gate state
+  awaitingGateResponse:  false,
+  awaitingClarification: false,
+  // coin
+  landingSignalDetected: false,
+  reflectionShown:       false,
+  minimalInputPathActive: false,
+  coachModeActive:       false,
+  anchorTurnIndex:       null,   // index in user turns where landing signal fired
+  anchorEdited:          false,  // true after founder edits anchor phrase post-generation
+  pendingSynthesis:      null    // set by callConversationAI() at gate-present time; consumed by triggerGeneration()
+};
+
+/* ══════════════════════════════════════════════════════════════
+   PART C — BEHAVIORAL LOGIC
+   ══════════════════════════════════════════════════════════════ */
+
+// ── UI helpers ─────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+// Strip HTML tags before storing assistant content in conversationTurns —
+// the Anthropic API must receive plain text, not rendered HTML markup.
+function getApiKey() {
+  const el = document.getElementById('inp-apikey');
+  return el ? el.value.trim() : '';
+}
+function stripHTML(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+const chatMessages = $('chat-messages');
+const chatInputArea = $('chat-input-area');
+const userTextEl = $('user-text');
+const sendBtn = $('send-btn');
+
+let gateYesCallback = null;
+let gateNoCallback  = null;
+
+function scrollChat() {
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function showTyping() {
+  const el = document.createElement('div');
+  el.className = 'typing-indicator';
+  el.id = 'typing-ind';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  chatMessages.appendChild(el);
+  scrollChat();
+  return el;
+}
+
+function removeTyping() {
+  const el = $('typing-ind');
+  if (el) el.remove();
+}
+
+function botSay(html, style = 'bot', delay = 900) {
+  return new Promise(resolve => {
+    const typer = showTyping();
+    setTimeout(() => {
+      removeTyping();
+      const div = document.createElement('div');
+      div.className = 'bubble ' + style;
+      div.innerHTML = html;
+      chatMessages.appendChild(div);
+      scrollChat();
+      resolve(div);
+    }, delay);
+  });
+}
+
+function userSay(text) {
+  const div = document.createElement('div');
+  div.className = 'bubble user';
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  scrollChat();
+}
+
+function showGateButtons(onYes, onNo) {
+  const row = document.createElement('div');
+  row.className = 'gate-btn-row';
+  row.id = 'gate-buttons';
+  row.innerHTML = '<button class="gate-btn yes">Yes, that feels right</button><button class="gate-btn no">Something feels off</button>';
+  chatMessages.appendChild(row);
+  scrollChat();
+  row.querySelector('.yes').addEventListener('click', () => { row.remove(); onYes(); });
+  row.querySelector('.no').addEventListener('click',  () => { row.remove(); onNo();  });
+}
+
+function removeGateButtons() {
+  const el = $('gate-buttons');
+  if (el) el.remove();
+}
+
+// ── Tab switching ──────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    $('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Cards initialization ────────────────────────────────────────
+const CARD_DEFS = [
+  { id:'c1', num:'Card 1', title:'Your Situation' },
+  { id:'c2', num:'Card 2', title:'Your Why Statement' },
+  { id:'c3', num:'Card 3', title:'What Got Us Here' },
+  { id:'c4', num:'Card 4', title:'Narrative Anchors' },
+  { id:'c5', num:'Card 5', title:'Coach Moment' },
+  { id:'c6', num:'Card 6', title:'What This Means Going Forward' },
+  { id:'c7', num:'Card 7', title:'Terms in Your Why Statement' }
+];
+
+function initCards() {
+  const grid = $('cards-grid');
+  grid.innerHTML = '';
+  CARD_DEFS.forEach(cd => {
+    const el = document.createElement('div');
+    el.className = 'card-item';
+    el.id = cd.id;
+    el.innerHTML = `
+      <div class="card-num">${cd.num}</div>
+      <div class="card-title">${cd.title}</div>
+      <div class="card-value">
+        <div class="card-placeholder">
+          <div class="placeholder-bar long"></div>
+          <div class="placeholder-bar medium"></div>
+          <div class="placeholder-bar short"></div>
+        </div>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+function populateCard(id, valueHTML) {
+  const el = $(id);
+  if (!el) return;
+  el.querySelector('.card-value').innerHTML = valueHTML;
+  el.classList.add('populated');
+  el.classList.add('flash');
+  setTimeout(() => el.classList.remove('flash'), 700);
+}
+
+// ── Answers panel helpers ──────────────────────────────────────
+function logAnswer(label, value) {
+  $('answers-empty').style.display = 'none';
+  const list = $('answers-list');
+  const row = document.createElement('div');
+  row.className = 'answer-row';
+  row.innerHTML = `<div class="answer-label">${label}</div><div class="answer-value">${value}</div>`;
+  list.appendChild(row);
+}
+
+// ── Text analysis helpers ──────────────────────────────────────
+function containsAny(text, patterns) {
+  const t = text.toLowerCase();
+  return patterns.some(p => t.includes(p.toLowerCase()));
+}
+
+function detectNeedSignal(text) {
+  for (const [need, data] of Object.entries(NEED_SIGNALS)) {
+    if (containsAny(text, data.patterns)) return need;
+  }
+  return null;
+}
+
+function isGarbage(text) {
+  const t = text.trim();
+  // Only true garbage: empty, single non-letter char, or pure non-alpha strings with no meaning
+  if (t.length === 0) return true;
+  if (t.length === 1 && !/[a-zA-Z]/.test(t)) return true;
+  // Pure symbol/number strings with no letters at all (e.g. "???", "123")
+  if (/^[^a-zA-Z]+$/.test(t) && t.length < 6) return true;
+  return false;
+}
+
+function isTestString(text) {
+  const t = text.toLowerCase().trim();
+  return ['testing','test 1','test1','1 2 3','123','is this thing on','hello?','hi?'].some(p => t.includes(p));
+}
+
+function isOffTopic(text) {
+  const offTopicPatterns = ['weather','sports','recipe','movie','stock price','news today','what time is','bitcoin','crypto'];
+  return containsAny(text, offTopicPatterns);
+}
+
+function isPushback(text) {
+  const t = text.toLowerCase();
+  return ['why does this matter','why does it matter','why should i','what\'s the point','does this even matter','why bother','skip this','this is pointless'].some(p => t.includes(p));
+}
+
+function isPolishedBrandLanguage(text) {
+  const patterns = ['passionate about','mission is to','dedicated to empowering','transforming the','disrupting','changing the game','world-class','best-in-class','leverage','synergy'];
+  return containsAny(text, patterns) || (text.length > 30 && /^[A-Z]/.test(text) && text.includes('.') && !text.includes('?'));
+}
+
+function detectInputType(text) {
+  const t = text.toLowerCase();
+  if (['there was this','i remember','back when','years ago','one time','that day','that moment','i saw','it happened'].some(p => t.includes(p))) return 'memory';
+  if (['every week','i see this','every day','currently','right now','keeps happening','ongoing','still','these days'].some(p => t.includes(p))) return 'present';
+  return null;
+}
+
+function detectLandingSignal(text) {
+  // Signs: specific person named, emotional specificity, less rehearsed quality, pause words
+  const specific = ['my mom','my dad','my daughter','my son','my sister','my brother','my wife','my husband','my friend','a kid i knew','a patient','my neighbor','my client','my teacher'];
+  if (containsAny(text, specific)) return true;
+  if (text.includes('"') || text.includes('…') || text.includes('—')) return true;
+  if (text.length > 120 && detectInputType(text) === 'memory') return true;
+  if (S.conversationTurns.filter(t=>t.role==='user').length >= 3 && text.length > 80) return true;
+  return false;
+}
+
+function detectRelatednessMention(text) {
+  return containsAny(text, NEED_SIGNALS.relatedness.patterns);
+}
+
+// ── Hallucination trigger check ────────────────────────────────
+function checkHallucinationTrigger(text) {
+  for (const trigger of GAP_LIBRARY.hallucinationTriggers) {
+    if (containsAny(text, trigger.trigger)) {
+      const alreadyFired = S.hallucinationFired[trigger.id];
+      S.hallucinationFired[trigger.id] = true;
+      return alreadyFired ? trigger.secondPush : trigger.firstPush;
+    }
+  }
+  return null;
+}
+
+// ── Thin input check ───────────────────────────────────────────
+function checkThinInput(text) {
+  for (const t of GAP_LIBRARY.thinInput) {
+    if (containsAny(text, t.trigger)) return t.response;
+  }
+  return null;
+}
+
+// ── Build the Why Statement (AI synthesis simulation) ──────────
+async function synthesizeWhyStatement() {
+  // Compose a system prompt + conversation log for the Anthropic API
+  const turns = S.conversationTurns.map(t => ({ role: t.role, content: t.content }));
+  const systemPrompt = SYSTEM_PROMPT_BOUNDARIES + `\n\nSynthesis task: Draft a Why Statement from the founder's conversation below.
+
+Rules:
+1. Draft using the founder's OWN words from the conversation — not polished brand language.
+2. The statement must name the genuine personal reason the business exists. 1–2 sentences (3 for Established with two temporal layers).
+3. Also provide: (a) "What Got Us Here" — 1–2 specific anchors from the conversation, quoted where possible. (b) 1–2 Narrative Anchor blocks, each naming a specific person/moment/situation and one connection sentence.
+4. Respond ONLY in this JSON format (no preamble, no markdown):
+{
+  "whyStatement": "...",
+  "whatGotUsHere": ["anchor 1 text (quote if possible)", "anchor 2 text or null"],
+  "primaryAnchor": { "name": "short label for the anchor", "connection": "one sentence connecting it to the Why Statement" },
+  "secondAnchor": { "name": "...", "connection": "..." } or null,
+  "needSignal": "autonomy|competence|relatedness"
+}
+
+Business stage: ${S.stage}
+Business type: ${S.businessType}
+Industry: ${S.industry}`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getApiKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: turns
+      })
+    });
+    const data = await response.json();
+    const raw = data.content.map(b => b.text || '').join('').trim();
+    const clean = raw.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  } catch(e) {
+    // Fallback if API unavailable
+    const userTurns = S.conversationTurns.filter(t=>t.role==='user');
+    const lastSubstantial = userTurns.slice(-2).map(t=>t.content).join(' ');
+    return {
+      whyStatement: lastSubstantial.length > 20
+        ? lastSubstantial.substring(0, 180) + (lastSubstantial.length > 180 ? '…' : '')
+        : "I'm doing this because it matters to me in a way I'm still finding words for.",
+      whatGotUsHere: [userTurns.length > 0 ? '"' + userTurns[userTurns.length-1].content.substring(0,100) + '"' : 'What you shared in this conversation'],
+      primaryAnchor: { name: 'Core moment', connection: 'This is the anchor your Why Statement is built on — the specific thing you returned to.' },
+      secondAnchor: null,
+      needSignal: S.needSignal || 'autonomy'
+    };
+  }
+}
+
+// ── Generation trigger ─────────────────────────────────────────
+// S.pendingSynthesis is set by callConversationAI() when action:'present_gate' fires.
+// On Yes at the gate we consume it directly — no second API call.
+async function triggerGeneration() {
+  S.generated = true;
+  sendBtn.disabled = true;
+  chatInputArea.classList.add('hidden');
+
+  await botSay('Let me put this together for you…', 'bot', 400);
+
+  // Use the synthesis payload stored at gate-present time.
+  // If for any reason it is absent (minimal-input path, loop escalation before gate),
+  // fall back to synthesizeWhyStatement().
+  let synthesis = S.pendingSynthesis;
+  if (!synthesis || !synthesis.draftStatement) {
+    synthesis = await synthesizeWhyStatement();
+    synthesis.draftStatement = synthesis.whyStatement; // normalise key name
+  }
+
+  S.whyStatement      = synthesis.draftStatement || synthesis.whyStatement || '';
+  S.whatGotUsHere     = (synthesis.whatGotUsHere || []).filter(Boolean);
+  S.primaryAnchor     = synthesis.primaryAnchor?.name || '';
+  S.primaryConnection = synthesis.primaryAnchor?.connection || '';
+  S.secondAnchor      = synthesis.secondAnchor?.name || '';
+  S.secondConnection  = synthesis.secondAnchor?.connection || '';
+  S.needSignal        = synthesis.needSignal || S.needSignal || 'autonomy';
+
+  // Populate cards
+  const wsSummary = S.whyStatement.split(' ').slice(0,12).join(' ') + (S.whyStatement.split(' ').length > 12 ? '…' : '');
+  populateCard('c1', `<span>${S.stage} · ${S.businessType}${S.industry ? ' · ' + S.industry : ''}</span>`);
+  populateCard('c2', `<span style="font-style:italic;">${wsSummary}</span>`);
+  populateCard('c3', S.whatGotUsHere[0] ? `<span>${S.whatGotUsHere[0].substring(0,40)}…</span>` : 'Drawn from conversation');
+  populateCard('c4', S.primaryAnchor ? `<span>${S.primaryAnchor}</span>` : 'Narrative anchor from conversation');
+  const q1 = COACH_MOMENT_LIBRARY.stageQ1[S.stage];
+  populateCard('c5', q1 ? `<span>${q1.q.split(' ').slice(0,6).join(' ')}…</span>` : 'Coach question');
+  populateCard('c6', 'Foundation 2 — End Game');
+  const hasTerms = (S.stage === 'Just Exploring' || S.stage === 'Pre-Launch');
+  populateCard('c7', hasTerms ? 'Terms in Your Why Statement' : '(Suppressed — not applicable at this stage)');
+
+  // Log to answers panel
+  logAnswer('Why Statement', S.whyStatement);
+  logAnswer('Stage', S.stage);
+  logAnswer('Need Signal', S.needSignal);
+
+  // Render deliverable
+  renderDeliverable();
+
+  // Send closing line
+  await botSay(CONFIRMATION_GATE.yesPath, 'bot', 800);
+
+  // Show Coach Mode
+  await botSay(buildCoachModeHTML(), 'bot', 600);
+
+  // Switch to deliverable tab
+  document.querySelector('[data-tab="deliverable"]').click();
+}
+
+// ── Render full deliverable ────────────────────────────────────
+function renderDeliverable() {
+  $('deliverable-placeholder').style.display = 'none';
+  const content = $('deliverable-content');
+  content.style.display = 'block';
+
+  const stage = S.stage;
+  const hasTerms = (stage === 'Just Exploring' || stage === 'Pre-Launch');
+  const terms = hasTerms ? (TERMS_TO_KNOW[stage] || []) : [];
+  const bridge = FORWARD_BRIDGES[stage] || FORWARD_BRIDGES['Just Exploring'];
+
+  // Build Zone 1 chips
+  let chips = '';
+  chips += `<span class="chip">${stage}</span>`;
+  if (S.businessType) chips += `<span class="chip">${S.businessType}</span>`;
+  if (S.geoScope)     chips += `<span class="chip">${S.geoScope}</span>`;
+  if (S.industry)     chips += `<span class="chip">${S.industry}</span>`;
+  // §5.2 Conditional chips — sourced from conversation, sourced from S
+  // Quantitative context: Pre-Launch and above where a concrete number surfaced; JE only if a number came up
+  if (S.quantContext && (stage !== 'Just Exploring' || S.quantContext)) {
+    chips += `<span class="chip">${S.quantContext}</span>`;
+  }
+  // Secondary context detail: include only if it contributed to the conversation
+  if (S.secondaryDetail) {
+    chips += `<span class="chip">${S.secondaryDetail}</span>`;
+  }
+  // Founder uncertainty or named fear: JE only; omit for Early Stage+ unless raised unprompted
+  if (S.founderUncertainty && (stage === 'Just Exploring' || S.founderUncertainty)) {
+    chips += `<span class="chip" style="border-color:var(--amber);color:#7A4A16;background:#FFF8EF;">${S.founderUncertainty}</span>`;
+  }
+  // Verbatim anchor phrase — ALWAYS present, ALWAYS final chip per §5.2
+  const userTurns = S.conversationTurns.filter(t=>t.role==='user');
+  // Use the turn that was the landing signal, not necessarily the last turn
+  const anchorTurn = S.anchorTurnIndex != null ? userTurns[S.anchorTurnIndex] : userTurns[userTurns.length-1];
+  if (anchorTurn) {
+    const anchorExcerpt = anchorTurn.content;
+    const shortened = anchorExcerpt.length > 55 ? '"' + anchorExcerpt.substring(0,55) + '\u2026"' : '"' + anchorExcerpt + '"';
+    chips += `<span class="chip anchor">${shortened}</span>`;
+  }
+
+  // Zone 3 — Narrative Anchors
+  // §11: if anchor was edited post-generation, flag for review rather than auto-regen
+  const anchorReviewNote = S.anchorEdited
+    ? `<div style="font-size:11px;color:var(--blue);font-style:italic;margin-top:4px;">Anchor phrase was edited — review connection sentence for accuracy.</div>`
+    : '';
+  let zone3HTML = '';
+  if (S.primaryAnchor) {
+    zone3HTML += `
+      <div class="narrative-anchor-block">
+        <div class="anchor-name">${S.primaryAnchor}</div>
+        <div class="anchor-connection">${S.primaryConnection}</div>
+        ${anchorReviewNote}
+      </div>`;
+  }
+  if (S.secondAnchor && S.secondConnection) {
+    zone3HTML += `
+      <div class="narrative-anchor-block">
+        <div class="anchor-name">${S.secondAnchor}</div>
+        <div class="anchor-connection">${S.secondConnection}</div>
+      </div>`;
+  }
+
+  // Zone 4 — Coach Moment
+  const q1 = COACH_MOMENT_LIBRARY.stageQ1[stage] || COACH_MOMENT_LIBRARY.fallback;
+  let q2 = COACH_MOMENT_LIBRARY.fallback;
+  for (const gap of COACH_MOMENT_LIBRARY.gapQ2) {
+    if (gap.condition(S)) { q2 = gap; break; }
+  }
+
+  // Zone 5 — Actions
+  // Action 1: always present — ties Why Statement to an imminent decision (references S.whyStatement verbatim)
+  const action1 = `Use your Why Statement as a decision filter this week. Before any significant decision — who to hire, what to build, what to say no to — ask whether it's consistent with what you named today: "${S.whyStatement.substring(0,80)}${S.whyStatement.length > 80 ? '\u2026' : ''}"`;
+  // Action 2: fires by stage — derivation from §9.1 stage table
+  const action2 = STAGE_ACTIONS[stage] || '';
+  // Action 3: conditional — §9.1 specifies: include only when session produced a specific forward-looking
+  // tension or gap that Foundation 2 (End Game) will directly address (S.forwardTension is set by listening logic)
+  let action3 = '';
+  if (S.forwardTension) {
+    action3 = `Read the one-paragraph description of Foundation 2 — End Game — before your next session. Your Why just told you ${S.forwardTension}. End Game will ask where you want it to go.`;
+  } else if (S.exitGoalNamed || S.twoTemporalLayers || S.driftDetected) {
+    // Session produced a forward-looking tension even if not explicitly stored as forwardTension
+    const tensionDesc = S.exitGoalNamed ? 'something specific about what success looks like and what you want from this business'
+                       : S.twoTemporalLayers ? 'that your reasons for building this have layered over time'
+                       : 'that the original reason and the current reality may have drifted';
+    action3 = `Read the one-paragraph description of Foundation 2 — End Game — before your next session. Your Why just told you ${tensionDesc}. End Game will ask where you want it to go.`;
+  }
+
+  // Conditional flags
+  let flagHTML = '';
+  if (S.loopEscalated) {
+    flagHTML += `<div class="conditional-flag"><div class="conditional-flag-label">Working Draft</div>${CONFIRMATION_GATE.loopEscalationFlag}</div>`;
+  }
+  if (S.minimalInput) {
+    flagHTML += `<div class="conditional-flag"><div class="conditional-flag-label">Starting Point</div>${CONFIRMATION_GATE.minimalInputFlag}</div>`;
+  }
+
+  // What Got Us Here items
+  let wguHTML = '';
+  if (S.whatGotUsHere.length > 0) {
+    S.whatGotUsHere.forEach(item => {
+      if (item) wguHTML += `<div class="what-got-us-item"><div class="what-got-us-bullet"></div><div class="what-got-us-text">${item}</div></div>`;
+    });
+  }
+
+  // Terms
+  let termsHTML = '';
+  if (hasTerms && terms.length > 0) {
+    termsHTML = `<div class="terms-section">
+      <div class="terms-label">Terms to Know</div>
+      ${terms.map(t => `<div class="term-row"><div class="term-name">${t.term}</div><div class="term-def">${t.def}</div></div>`).join('')}
+    </div>`;
+  }
+
+  content.innerHTML = `
+    <div class="deliverable-header">
+      <div class="deliverable-title">Your Why Statement</div>
+      <div class="deliverable-subtitle">Foundation 1 — ${stage} · Generated ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+    </div>
+
+    <!-- Zone 1 -->
+    <div class="zone">
+      <div class="zone-header">
+        <div class="zone-num">1</div>
+        <div class="zone-label">Your Situation</div>
+      </div>
+      <div class="zone-body">
+        <div class="zone1-intro">Here's what we worked with in this conversation.</div>
+        <div class="chips-row">${chips}</div>
+      </div>
+    </div>
+
+    <!-- Zone 2 -->
+    <div class="zone">
+      <div class="zone-header">
+        <div class="zone-num">2</div>
+        <div class="zone-label">The Why Statement</div>
+      </div>
+      <div class="zone-body">
+        <div class="why-statement-block">
+          <div class="why-statement-label">Your Why Statement</div>
+          <div class="why-statement-text">${S.whyStatement}</div>
+        </div>
+        ${S.anchorEdited ? `<div class="conditional-flag" style="border-color:var(--blue);"><div class="conditional-flag-label" style="color:var(--blue);">Anchor Phrase Updated</div>The anchor phrase was edited after generation. Your Why Statement may reflect the original conversation — review it and return to the conversation if a revision is needed.</div>` : ''}
+        ${wguHTML.length > 0 ? `<div class="what-got-us-label">What Got Us Here</div>${wguHTML}` : ''}
+        ${flagHTML}
+      </div>
+    </div>
+
+    <!-- Zone 3 -->
+    <div class="zone">
+      <div class="zone-header">
+        <div class="zone-num">3</div>
+        <div class="zone-label">Narrative Anchors</div>
+      </div>
+      <div class="zone-body">
+        ${zone3HTML || '<div style="color:var(--text-light);font-style:italic;font-size:13px;">Anchors drawn from your conversation.</div>'}
+      </div>
+    </div>
+
+    <!-- Zone 4 -->
+    <div class="zone">
+      <div class="zone-header">
+        <div class="zone-num">4</div>
+        <div class="zone-label">Coach Moment</div>
+      </div>
+      <div class="zone-body">
+        <div class="coach-moment-block">
+          <div class="coach-moment-tag">Q1 — Stage Specific</div>
+          <div class="coach-moment-q">${q1.q}</div>
+          <div class="coach-moment-source">${q1.source}</div>
+        </div>
+        <div class="coach-moment-block">
+          <div class="coach-moment-tag">Q2 — Gap Specific</div>
+          <div class="coach-moment-q">${q2.q}</div>
+          <div class="coach-moment-source">${q2.source}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone 5 -->
+    <div class="zone">
+      <div class="zone-header">
+        <div class="zone-num">5</div>
+        <div class="zone-label">What This Means Going Forward</div>
+      </div>
+      <div class="zone-body">
+        <div class="zone5-grid">
+          <div>
+            <div class="zone5-col-label">In Your Business This Week</div>
+            <div class="action-item">
+              <div class="action-num">1</div>
+              <div class="action-text">${action1}</div>
+            </div>
+            <div class="action-item">
+              <div class="action-num">2</div>
+              <div class="action-text">${action2}</div>
+            </div>
+            ${action3 ? `<div class="action-item">
+              <div class="action-num">3</div>
+              <div class="action-text">${action3}</div>
+            </div>` : ''}
+          </div>
+          <div>
+            <div class="zone5-col-label">On the Platform</div>
+            <div class="forward-bridge-card">
+              <div class="forward-bridge-label">→ Next Foundation</div>
+              <div class="forward-bridge-text">${bridge}</div>
+            </div>
+          </div>
+        </div>
+        ${termsHTML}
+      </div>
+    </div>
+
+    <!-- Boundaries -->
+    <div class="boundaries-block">
+      <div class="boundaries-label">Boundaries &amp; Disclaimer</div>
+      <div class="boundaries-text">This output is an educational starting point, not professional advice. Your Why Statement is built from what you shared in this conversation — it reflects your thinking at this moment, not a psychological assessment or a guarantee of business success. It will sharpen as your business develops.<br><br>This agent does not provide financial projections, legal conclusions, or predictions about business outcomes tied to your Why Statement. It does not tell you what your Why should be. If questions come up about legal structure, funding, or financial planning, those conversations happen in the foundations built for them — this one isn't the place.</div>
+    </div>
+  `;
+}
+
+// ── Edit cascade — §11 dependency map ───────────────────────
+// Called when the founder edits the verbatim anchor phrase after generation.
+// Per §11: Zone 2 Why Statement and Zone 3 Narrative Anchor flag for review;
+// the deliverable does NOT auto-regenerate from an edited chip.
+function handleAnchorEdit(newAnchorText) {
+  // Update anchor chip source in state
+  const uTurns = S.conversationTurns.filter(t => t.role === 'user');
+  if (S.anchorTurnIndex != null && uTurns[S.anchorTurnIndex]) {
+    // Inject the edited text as a synthetic user turn so the chip re-renders
+    S.conversationTurns.push({ role: 'user', content: '[Anchor edit] ' + newAnchorText });
+    S.anchorTurnIndex = S.conversationTurns.filter(t => t.role === 'user').length - 1;
+  }
+  // Re-render deliverable with review flags on Zone 2 and Zone 3
+  S.anchorEdited = true;
+  renderDeliverable();
+  // Flash deliverable tab to signal update
+  const tab = document.querySelector('[data-tab="deliverable"]');
+  if (tab) {
+    tab.style.color = 'var(--amber)';
+    setTimeout(() => { tab.style.color = ''; }, 1200);
+  }
+}
+
+// ── Coach Mode panel ───────────────────────────────────────────
+function buildCoachModeHTML() {
+  const wsSummary = S.whyStatement.split(' ').slice(0,10).join(' ') + '…';
+  const topicsHTML = COACH_TOPICS.map(t =>
+    `<button class="coach-topic-btn" data-coach-topic="${t.label}">${t.label}</button>`
+  ).join('');
+  return `<div>
+    <div class="coach-tag">COACH MODE</div>
+    <div style="font-size:13px;margin-bottom:10px;">What would you like to explore further?</div>
+    ${topicsHTML}
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">Or just type a question.</div>
+  </div>`;
+}
+
+// ── Handle Coach Mode topic click ─────────────────────────────
+document.addEventListener('click', e => {
+  if (e.target.matches('[data-coach-topic]')) {
+    const label = e.target.dataset.coachTopic;
+    const topic = COACH_TOPICS.find(t => t.label === label);
+    if (!topic) return;
+    userSay(label);
+    const wsSummary = S.whyStatement.split(' ').slice(0,8).join(' ') + '…';
+    const answer = topic.answer.replace(/\[WHY_STATEMENT_SUMMARY\]/g, `"${wsSummary}"`);
+    botSay(`<div class="coach-tag">COACH MOMENT</div><div>${answer}</div>`, 'coach', 700);
+  }
+});
+
+// ── AI conversation engine ───────────────────────────────────────────────────
+// All bot responses during the listening phase go through the Anthropic API.
+// The same full-synthesis API call that produces the gate draft also produces
+// the complete deliverable payload (whyStatement, whatGotUsHere, anchors).
+// That payload is stored in S.pendingSynthesis at gate-present time and
+// consumed by triggerGeneration() on Yes — no second API call.
+
+// Build the system prompt that governs the entire conversation
+function buildConversationSystemPrompt() {
+  return SYSTEM_PROMPT_BOUNDARIES + `
+
+You are running the Foundation 1 — Your Why conversation for a ${S.stage} stage founder${S.businessType ? ' building a ' + S.businessType + ' business' : ''}${S.industry ? ' in ' + S.industry : ''}.
+
+CONVERSATION RULES (follow exactly):
+1. You are listening for one of three need signals from Self-Determination Theory (never name this framework):
+   - Autonomy: wanting control over how the work is done
+   - Competence: seeing a standard unmet and knowing you can meet it
+   - Relatedness: doing this for a specific person, community, or group
+2. If the first answer contains none of these signals, ask: "Is there someone specific you're thinking of when you imagine this working?"
+3. If an answer reads like brand/marketing copy, test it once: "${GAP_LIBRARY.edgeCases.polishedBrandTest}"
+4. If emotionally loaded content surfaces, first say: "${GAP_LIBRARY.edgeCases.emotionallyLoaded}" — then follow.
+5. Follow threads. If a specific person is named, follow it: "Tell me more about them."
+6. When something with real weight has landed — a specific person named, a memory with detail, language that sounds less rehearsed — fire the reflection check: "It sounds like this really comes down to [X] — is that close?"
+7. After the founder responds to the reflection, produce a JSON object ONLY (no prose, no preamble, no markdown fences) with this exact structure:
+{
+  "action": "present_gate",
+  "draftStatement": "1-2 sentences in the founder's own words",
+  "whatGotUsHere": ["specific anchor 1, quoted from conversation", "specific anchor 2 or null"],
+  "primaryAnchor": { "name": "short label — person/moment/situation", "connection": "one sentence: what this anchor revealed about the founder's Why" },
+  "secondAnchor": { "name": "...", "connection": "..." },
+  "needSignal": "autonomy|competence|relatedness"
+}
+   Set secondAnchor to null if only one anchor surfaced. Do NOT manufacture a second anchor.
+   For Established stage with two temporal layers, draftStatement may be 3 sentences.
+8. Until the reflection has fired and been confirmed, respond only in plain conversational prose — no JSON. One question at a time. Short. Follow the founder's thread.
+9. THIN INPUT responses (use these exactly when the answer is surface-level):
+   - "I want to make money" → "${GAP_LIBRARY.thinInput[0].response}"
+   - "I saw a good opportunity" → "${GAP_LIBRARY.thinInput[1].response}"
+   - "I want to be my own boss" → "${GAP_LIBRARY.thinInput[2].response}"
+   - "I don't know, it just felt right" → "${GAP_LIBRARY.thinInput[3].response}"
+   - "I built the thing that didn't exist" → "${GAP_LIBRARY.thinInput[4].response}"
+10. EXERCISE PUSHBACK: If the founder pushes back on the exercise:
+    - General: "${GAP_LIBRARY.edgeCases.exercisePushbackGeneral}"
+    - Growth stage: "${GAP_LIBRARY.edgeCases.exercisePushbackGrowth}"
+    - Second push (Growth): "${GAP_LIBRARY.edgeCases.exercisePushbackGrowth2}"
+11. Do not ask more than one question per turn. Do not summarise back to the founder. Do not use bullet points or headers. Short conversational responses only.
+12. CRITICAL — READ HISTORY FIRST: The full conversation is in the messages array. Read every prior exchange before responding. Never repeat a question you have already asked in this conversation. If the founder answered something, build on that answer — do not ask it again.
+13. CRITICAL — FORMAT during listening phase: plain prose only, no JSON, no markdown, no lists, 1-3 sentences max. Switch to the JSON format ONLY when firing the gate (rule 7).`;
+}
+
+// Single API call — returns either a conversational string or the gate JSON object
+async function callConversationAI() {
+  const turns = S.conversationTurns.map(t => ({ role: t.role, content: t.content }));
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': getApiKey(),
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: buildConversationSystemPrompt(),
+        messages: turns
+      })
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.content || []).map(b => b.text || '').join('').trim();
+
+    // Try to parse as gate JSON — if it parses and has action:'present_gate', it's the gate signal
+    try {
+      const cleaned = raw.replace(/^```json\s*/,'').replace(/\s*```$/,'').trim();
+      const parsed = JSON.parse(cleaned);
+      if (parsed.action === 'present_gate') return { type: 'gate', payload: parsed };
+    } catch(_) {}
+
+    return { type: 'text', text: raw };
+  } catch(e) {
+    console.error('Anthropic API error:', e);
+    if (!getApiKey()) {
+      return { type: 'error', text: '⚠️ No API key — paste your key (sk-ant-…) into the API Key field in the top bar.' };
+    }
+    const msg = (e && e.message) ? e.message : String(e);
+    if (/401|403|invalid_api_key|authentication/i.test(msg)) {
+      return { type: 'error', text: '⚠️ API key error — check the key in the top bar starts with sk-ant-.' };
+    }
+    return { type: 'error', text: '⚠️ API error: ' + msg + '. Check the browser console.' };
+  }
+}
+
+// Rule-based fallback used only when the API is unavailable
+function buildFallbackResponse() {
+  const userTurns = S.conversationTurns.filter(t => t.role === 'user');
+  const last = userTurns[userTurns.length - 1]?.content || '';
+  const need = detectNeedSignal(last);
+  const inputType = detectInputType(last);
+  if (need === 'relatedness') return "Tell me more about them — what would it mean to them if this existed?";
+  if (need === 'competence')  return "What is it about you specifically that made you the one to address it?";
+  if (need === 'autonomy')    return "What is it about how you'd do this that would be different?";
+  if (inputType === 'memory') return "What happened next?";
+  if (inputType === 'present') return "What's that like for you?";
+  const count = userTurns.length;
+  if (count <= 1) return "Is there someone specific you're thinking of when you imagine this working?";
+  if (count === 2) return "What is it about you that makes this the right fit?";
+  return "Is there a specific person — or a moment — that sits at the center of this for you?";
+}
+
+// Main conversation handler
+async function handleTurn(text) {
+  if (!text.trim()) return;
+
+  // ── Hard-coded gap library checks (fire before AI, per spec) ──────────────
+
+  // 1. Hallucination triggers — check FIRST (§12.1)
+  const hallResp = checkHallucinationTrigger(text);
+  if (hallResp) {
+    S.conversationTurns.push({ role: 'user', content: text });
+    await botSay(hallResp, 'bot', 800);
+    S.conversationTurns.push({ role: 'assistant', content: stripHTML(hallResp) });
+    return;
+  }
+
+  // 2. Garbage input
+  if (isGarbage(text)) {
+    S.conversationTurns.push({ role: 'user', content: text });
+    const bizName = S.industry || S.businessType || 'your business';
+    const resp = `That one didn't quite come through — let's get back to why you're building ${bizName}. What's been driving you?`;
+    await botSay(resp, 'bot', 600);
+    S.conversationTurns.push({ role: 'assistant', content: stripHTML(resp) });
+    return;
+  }
+
+  // 3. Test string
+  if (isTestString(text)) {
+    S.conversationTurns.push({ role: 'user', content: text });
+    const bizName = S.industry || S.businessType || 'this';
+    const resp = `I'm here — we were talking about why you're building ${bizName}. What's been on your mind?`;
+    await botSay(resp, 'bot', 600);
+    S.conversationTurns.push({ role: 'assistant', content: stripHTML(resp) });
+    return;
+  }
+
+  // ── State updates from this turn (silent — all signal tracking) ──────────
+  S.conversationTurns.push({ role: 'user', content: text });
+
+  const need = detectNeedSignal(text);
+  if (need && !S.needSignal) S.needSignal = need;
+  const inputType = detectInputType(text);
+  if (inputType) S.inputType = inputType;
+  if (detectRelatednessMention(text)) S.relatednessNamed = true;
+  if (/exit|acquisition|sell the business|sell my business/i.test(text)) S.exitGoalNamed = true;
+  if (/channel|distribution|partner|wholesale|franchise/i.test(text)) S.distributionTension = true;
+  if (/drift|pulled away|lost track|not what it used to|running itself/i.test(text)) S.driftDetected = true;
+  if (S.stage === 'Established' && /back then|when i started|originally|now it's different|evolved/i.test(text)) S.twoTemporalLayers = true;
+  if (!S.quantContext) {
+    const qm = text.match(/\$[\d,]+k?M?|\d+\s*(years?|months?|weeks?)[^a-z]|\d+\s*customers?|raised|pre.?orders?/i);
+    if (qm && (S.stage !== 'Just Exploring' || /\$|\d+ (years?|months?|customers?)/.test(text))) {
+      const qi = text.indexOf(qm[0]);
+      S.quantContext = text.substring(Math.max(0, qi - 5), Math.min(text.length, qi + 35)).trim().replace(/[.!?]+$/, '');
+    }
+  }
+  if (!S.secondaryDetail) {
+    const sm = text.match(/\b(online|retail|direct|B2B|B2C|wholesale|solo founder|co-?founder|freelanc\w+|side hustle|background in|trained as|worked in)\b/i);
+    if (sm) {
+      const si = text.toLowerCase().indexOf(sm[0].toLowerCase());
+      S.secondaryDetail = text.substring(Math.max(0, si - 3), Math.min(text.length, si + 40)).trim().replace(/[.!?,]+$/, '');
+    }
+  }
+  if (!S.founderUncertainty && S.stage === 'Just Exploring') {
+    const fm = text.match(/I don.t know if|not sure (if|whether|I can)|scared|afraid|worried|what if I fail|feels (risky|scary|overwhelming)/i);
+    if (fm) {
+      const fi = text.toLowerCase().indexOf(fm[0].toLowerCase());
+      S.founderUncertainty = text.substring(fi, Math.min(text.length, fi + 60)).trim().replace(/[.!?,]+$/, '');
+    }
+  }
+  if (!S.forwardTension && /what success (looks like|means)|define success|when (is it|this is) done|end game|legacy|what I want (this|the business) to/i.test(text)) {
+    S.forwardTension = 'something specific about what you want from this business \u2014 what success actually looks like for you';
+  }
+
+  // ── Confirmation gate — clarification cycle ───────────────────────────────
+  if (S.awaitingClarification) {
+    S.clarifyCount++;
+    if (S.clarifyCount >= 2) {
+      S.loopEscalated = true;
+      S.awaitingClarification = false;
+      await botSay("I hear you \u2014 let me go with this version and flag it as a working draft.", 'bot', 700);
+      await triggerGeneration();
+    } else {
+      // Re-synthesize with the clarification in context, then re-present
+      const result = await callConversationAI();
+      if (result.type === 'gate') {
+        S.pendingSynthesis = result.payload;
+        const updatedDraft = result.payload.draftStatement;
+        const gateMsg = `Here\u2019s an updated version:\n\n<em>\u201c${updatedDraft}\u201d</em>\n\n${CONFIRMATION_GATE.clarifyConfirm}`;
+        await botSay(gateMsg, 'bot', 1000);
+        S.conversationTurns.push({ role: 'assistant', content: stripHTML(gateMsg) });
+        showGateButtons(
+          async () => { S.awaitingClarification = false; await triggerGeneration(); },
+          async () => { await botSay(CONFIRMATION_GATE.noPath, 'bot', 700); chatInputArea.classList.remove('hidden'); userTextEl.focus(); }
+        );
+        chatInputArea.classList.add('hidden');
+      } else {
+        await botSay(result.text, 'bot', 800);
+        S.conversationTurns.push({ role: 'assistant', content: stripHTML(result.text) });
+        chatInputArea.classList.remove('hidden');
+        userTextEl.focus();
+      }
+    }
+    return;
+  }
+
+  // ── Minimal input path ────────────────────────────────────────────────────
+  if (S.minimalInputPathActive) {
+    S.minimalInput = true;
+    await botSay('Got it. Let me work with that.', 'bot', 500);
+    await triggerGeneration();
+    return;
+  }
+
+  // ── AI drives the conversation ────────────────────────────────────────────
+  const result = await callConversationAI();
+
+  if (result.type === 'gate') {
+    // AI has decided landing has occurred and produced the synthesis payload
+    S.pendingSynthesis = result.payload;
+    S.landingSignalDetected = true;
+    if (S.anchorTurnIndex == null) {
+      S.anchorTurnIndex = S.conversationTurns.filter(t => t.role === 'user').length - 1;
+    }
+    const draft = result.payload.draftStatement;
+    const gateMsg = `Here\u2019s what I\u2019m hearing as your Why Statement:\n\n<em>\u201c${draft}\u201d</em>\n\n${CONFIRMATION_GATE.presentDraft}`;
+    await botSay(gateMsg, 'bot', 1200);
+    S.conversationTurns.push({ role: 'assistant', content: stripHTML(gateMsg) });
+    showGateButtons(
+      async () => { S.awaitingGateResponse = false; await triggerGeneration(); },
+      async () => {
+        S.awaitingGateResponse = false;
+        S.awaitingClarification = true;
+        await botSay(CONFIRMATION_GATE.noPath, 'bot', 700);
+        chatInputArea.classList.remove('hidden');
+        userTextEl.focus();
+      }
+    );
+    chatInputArea.classList.add('hidden');
+    return;
+  }
+
+  // Conversational response
+  if (result.type === 'error') {
+    await botSay(result.text, 'coach', 400);
+    return;
+  }
+  await botSay(result.text, 'bot', 900);
+  S.conversationTurns.push({ role: 'assistant', content: stripHTML(result.text) });
+
+  // Exercise pushback state check (AI handles the response, but we track for minimal-input path)
+  if (isPushback(text)) {
+    S.pushbackCount++;
+    if (S.pushbackCount >= 2) {
+      S.minimalInputPathActive = true;
+    }
+  }
+}
+
+// ── Conversation start ──────────────────────────────
+async function start() {
+  S.stage        = $('sel-stage').value;
+  S.businessType = $('sel-type').value;
+  S.geoScope     = $('sel-geo').value;
+  S.industry     = $('inp-industry').value.trim();
+
+  chatMessages.innerHTML = '';
+  initCards();
+
+  if (REDIRECT_STAGES.includes(S.stage)) {
+    await botSay('This foundation works differently at the ' + S.stage + ' stage — let me point you in the right direction.', 'bot', 800);
+    return;
+  }
+  if (FOLD_STAGES[S.stage]) S.stage = FOLD_STAGES[S.stage];
+
+  if (!getApiKey()) {
+    await botSay('⚠️ Paste your Anthropic API key into the <strong>API Key</strong> field in the top bar before typing. The conversation won’t work without it.', 'bot', 0);
+  }
+  const opening = STAGE_OPENINGS[S.stage] || STAGE_OPENINGS['Just Exploring'];
+  await botSay(opening, 'bot', 700);
+  S.conversationTurns.push({ role: 'assistant', content: stripHTML(opening) });
+
+  chatInputArea.classList.remove('hidden');
+  userTextEl.focus();
+}
+
+// ── Input events ───────────────────────────────────────────────
+$('start-btn').addEventListener('click', start);
+
+sendBtn.addEventListener('click', () => {
+  const text = userTextEl.value.trim();
+  if (!text || sendBtn.disabled) return;
+  userSay(text);
+  userTextEl.value = '';
+  userTextEl.style.height = '40px';
+  handleTurn(text);
+});
+
+userTextEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendBtn.click();
+  }
+});
+
+userTextEl.addEventListener('input', () => {
+  userTextEl.style.height = 'auto';
+  userTextEl.style.height = Math.min(userTextEl.scrollHeight, 120) + 'px';
+});
+</script>
+</body>
+</html>
