@@ -684,6 +684,16 @@ body {
   transition: background 0.15s;
 }
 #start-btn:hover { background: #259699; }
+#token-counter {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  white-space: nowrap;
+  margin-left: 12px;
+  border-left: 1px solid rgba(255,255,255,0.2);
+  padding-left: 12px;
+  line-height: 1.4;
+}
+#token-counter span { color: rgba(255,255,255,0.9); font-weight: 600; }
 
 /* responsive scroll for long content */
 #panel-deliverable { padding-bottom: 32px; }
@@ -712,7 +722,7 @@ body {
 <!-- TOPBAR -->
 <div id="topbar">
   <span class="brand">POPSTART</span>
-  <span class="agent-title">Foundation 1 — Your Why</span>
+  <span class="agent-title">Foundation 1 — Your Why, v1.5</span>
   <div class="profile-fields">
     <div class="profile-field-group">
       <label for="sel-stage">Stage</label>
@@ -752,6 +762,7 @@ body {
       <label for="inp-apikey">API Key</label>
       <input type="password" id="inp-apikey" placeholder="sk-ant-…" style="width:160px;">
     </div>
+    <div id="token-counter">Tokens&nbsp;&nbsp;<span id="tc-in">0</span> in&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-out">0</span> out&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-total">0</span> total</div>
   </div>
 </div>
 
@@ -1088,7 +1099,8 @@ const S = {
   coachModeActive:       false,
   anchorTurnIndex:       null,   // index in user turns where landing signal fired
   anchorEdited:          false,  // true after founder edits anchor phrase post-generation
-  pendingSynthesis:      null    // set by callConversationAI() at gate-present time; consumed by triggerGeneration()
+  pendingSynthesis:      null,   // set by callConversationAI() at gate-present time; consumed by triggerGeneration()
+  tokens: { input: 0, output: 0 }  // cumulative token usage across all API calls
 };
 
 /* ══════════════════════════════════════════════════════════════
@@ -1102,6 +1114,15 @@ const $ = id => document.getElementById(id);
 function getApiKey() {
   const el = document.getElementById('inp-apikey');
   return el ? el.value.trim() : '';
+}
+function updateTokenDisplay() {
+  const el_in    = document.getElementById('tc-in');
+  const el_out   = document.getElementById('tc-out');
+  const el_total = document.getElementById('tc-total');
+  if (!el_in) return;
+  el_in.textContent    = S.tokens.input.toLocaleString();
+  el_out.textContent   = S.tokens.output.toLocaleString();
+  el_total.textContent = (S.tokens.input + S.tokens.output).toLocaleString();
 }
 function stripHTML(html) {
   const tmp = document.createElement('div');
@@ -1359,6 +1380,11 @@ Industry: ${S.industry}`;
       })
     });
     const data = await response.json();
+    if (data.usage) {
+      S.tokens.input  += data.usage.input_tokens  || 0;
+      S.tokens.output += data.usage.output_tokens || 0;
+      updateTokenDisplay();
+    }
     const raw = data.content.map(b => b.text || '').join('').trim();
     const clean = raw.replace(/```json|```/g, '').trim();
     return JSON.parse(clean);
@@ -1778,6 +1804,11 @@ async function callConversationAI() {
     });
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
+    if (data.usage) {
+      S.tokens.input  += data.usage.input_tokens  || 0;
+      S.tokens.output += data.usage.output_tokens || 0;
+      updateTokenDisplay();
+    }
     const raw = (data.content || []).map(b => b.text || '').join('').trim();
 
     // Try to parse as gate JSON — if it parses and has action:'present_gate', it's the gate signal
