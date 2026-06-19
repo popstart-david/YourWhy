@@ -722,7 +722,7 @@ body {
 <!-- TOPBAR -->
 <div id="topbar">
   <span class="brand">POPSTART</span>
-  <span class="agent-title">Foundation 1 — Your Why, v1.5</span>
+  <span class="agent-title">Foundation 1 — Your Why, v1.6</span>
   <div class="profile-fields">
     <div class="profile-field-group">
       <label for="sel-stage">Stage</label>
@@ -762,7 +762,7 @@ body {
       <label for="inp-apikey">API Key</label>
       <input type="password" id="inp-apikey" placeholder="sk-ant-…" style="width:160px;">
     </div>
-    <div id="token-counter">Tokens&nbsp;&nbsp;<span id="tc-in">0</span> in&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-out">0</span> out&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-total">0</span> total</div>
+    <div id="token-counter">Tokens&nbsp;&nbsp;<span id="tc-in">0</span> in&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-out">0</span> out&nbsp;&nbsp;/&nbsp;&nbsp;<span id="tc-total">0</span> total&nbsp;&nbsp;|&nbsp;&nbsp;Est. cost&nbsp;&nbsp;<span id="tc-cost">$0.0000</span><span style="font-size:10px;color:rgba(255,255,255,0.35);margin-left:3px;" title="Haiku $0.80/$4.00 per M tokens (conv); Sonnet $3.00/$15.00 per M tokens (synthesis). Rates approximate — verify at anthropic.com/pricing.">*</span></div>
   </div>
 </div>
 
@@ -1100,7 +1100,14 @@ const S = {
   anchorTurnIndex:       null,   // index in user turns where landing signal fired
   anchorEdited:          false,  // true after founder edits anchor phrase post-generation
   pendingSynthesis:      null,   // set by callConversationAI() at gate-present time; consumed by triggerGeneration()
-  tokens: { input: 0, output: 0 }  // cumulative token usage across all API calls
+  tokens: { input: 0, output: 0 },  // cumulative token usage across all API calls
+  cost:   { input: 0, output: 0 }   // cumulative cost in USD
+};
+
+// Pricing per million tokens (as of June 2025 — verify at anthropic.com/pricing)
+const PRICING = {
+  'claude-sonnet-4-6':        { input: 3.00,  output: 15.00 },
+  'claude-haiku-4-5-20251001': { input: 0.80,  output: 4.00  }
 };
 
 /* ══════════════════════════════════════════════════════════════
@@ -1119,10 +1126,17 @@ function updateTokenDisplay() {
   const el_in    = document.getElementById('tc-in');
   const el_out   = document.getElementById('tc-out');
   const el_total = document.getElementById('tc-total');
+  const el_cost  = document.getElementById('tc-cost');
   if (!el_in) return;
   el_in.textContent    = S.tokens.input.toLocaleString();
   el_out.textContent   = S.tokens.output.toLocaleString();
   el_total.textContent = (S.tokens.input + S.tokens.output).toLocaleString();
+  if (el_cost) {
+    const totalCost = S.cost.input + S.cost.output;
+    el_cost.textContent = totalCost < 0.01
+      ? '<$0.01'
+      : '$' + totalCost.toFixed(4);
+  }
 }
 function stripHTML(html) {
   const tmp = document.createElement('div');
@@ -1373,7 +1387,7 @@ Industry: ${S.industry}`;
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-sonnet-4-6', // synthesis call — Sonnet (higher quality for Why Statement generation)
         max_tokens: 1000,
         system: systemPrompt,
         messages: turns
@@ -1381,8 +1395,13 @@ Industry: ${S.industry}`;
     });
     const data = await response.json();
     if (data.usage) {
-      S.tokens.input  += data.usage.input_tokens  || 0;
-      S.tokens.output += data.usage.output_tokens || 0;
+      const inTok  = data.usage.input_tokens  || 0;
+      const outTok = data.usage.output_tokens || 0;
+      S.tokens.input  += inTok;
+      S.tokens.output += outTok;
+      const rates = PRICING['claude-sonnet-4-6'];
+      S.cost.input  += (inTok  / 1_000_000) * rates.input;
+      S.cost.output += (outTok / 1_000_000) * rates.output;
       updateTokenDisplay();
     }
     const raw = data.content.map(b => b.text || '').join('').trim();
@@ -1796,7 +1815,7 @@ async function callConversationAI() {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: 'claude-haiku-4-5-20251001', // conversation turns — Haiku (cheaper, quality equivalent for listening)
         max_tokens: 1000,
         system: buildConversationSystemPrompt(),
         messages: turns
@@ -1805,8 +1824,13 @@ async function callConversationAI() {
     const data = await response.json();
     if (data.error) throw new Error(data.error.message);
     if (data.usage) {
-      S.tokens.input  += data.usage.input_tokens  || 0;
-      S.tokens.output += data.usage.output_tokens || 0;
+      const inTok  = data.usage.input_tokens  || 0;
+      const outTok = data.usage.output_tokens || 0;
+      S.tokens.input  += inTok;
+      S.tokens.output += outTok;
+      const rates = PRICING['claude-haiku-4-5-20251001'];
+      S.cost.input  += (inTok  / 1_000_000) * rates.input;
+      S.cost.output += (outTok / 1_000_000) * rates.output;
       updateTokenDisplay();
     }
     const raw = (data.content || []).map(b => b.text || '').join('').trim();
