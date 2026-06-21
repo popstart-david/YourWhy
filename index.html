@@ -327,7 +327,7 @@ body {
 }
 .card-num { font-size: 10px; font-weight: 700; color: var(--text-light); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
 .card-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
-.card-value { font-size: 13px; color: var(--text); line-height: 1.45; }
+.card-value { font-size: 13px; color: var(--text); line-height: 1.55; word-break: break-word; }
 .card-placeholder { display: flex; flex-direction: column; gap: 5px; }
 .placeholder-bar {
   height: 10px; border-radius: 4px; background: var(--bg);
@@ -722,7 +722,7 @@ body {
 <!-- TOPBAR -->
 <div id="topbar">
   <span class="brand">POPSTART</span>
-  <span class="agent-title">Foundation 1 — Your Why, v1.6</span>
+  <span class="agent-title">Foundation 1 — Your Why, v1.7</span>
   <div class="profile-fields">
     <div class="profile-field-group">
       <label for="sel-stage">Stage</label>
@@ -1451,13 +1451,13 @@ async function triggerGeneration() {
   S.needSignal        = synthesis.needSignal || S.needSignal || 'autonomy';
 
   // Populate cards
-  const wsSummary = S.whyStatement.split(' ').slice(0,12).join(' ') + (S.whyStatement.split(' ').length > 12 ? '…' : '');
+  const wsSummary = S.whyStatement.length > 300 ? S.whyStatement.substring(0, 300) + '…' : S.whyStatement;
   populateCard('c1', `<span>${S.stage} · ${S.businessType}${S.industry ? ' · ' + S.industry : ''}</span>`);
   populateCard('c2', `<span style="font-style:italic;">${wsSummary}</span>`);
-  populateCard('c3', S.whatGotUsHere[0] ? `<span>${S.whatGotUsHere[0].substring(0,40)}…</span>` : 'Drawn from conversation');
-  populateCard('c4', S.primaryAnchor ? `<span>${S.primaryAnchor}</span>` : 'Narrative anchor from conversation');
+  populateCard('c3', S.whatGotUsHere[0] ? `<span>${S.whatGotUsHere[0].length > 300 ? S.whatGotUsHere[0].substring(0, 300) + '\u2026' : S.whatGotUsHere[0]}</span>` : 'Drawn from conversation');
+  populateCard('c4', S.primaryAnchor ? `<span>${S.primaryAnchor}${S.primaryConnection ? ' — ' + (S.primaryConnection.length > 200 ? S.primaryConnection.substring(0,200) + '\u2026' : S.primaryConnection) : ''}</span>` : 'Narrative anchor from conversation');
   const q1 = COACH_MOMENT_LIBRARY.stageQ1[S.stage];
-  populateCard('c5', q1 ? `<span>${q1.q.split(' ').slice(0,6).join(' ')}…</span>` : 'Coach question');
+  populateCard('c5', q1 ? `<span>${q1.q.length > 300 ? q1.q.substring(0,300) + '\u2026' : q1.q}</span>` : 'Coach question');
   populateCard('c6', 'Foundation 2 — End Game');
   const hasTerms = (S.stage === 'Just Exploring' || S.stage === 'Pre-Launch');
   populateCard('c7', hasTerms ? 'Terms in Your Why Statement' : '(Suppressed — not applicable at this stage)');
@@ -1727,7 +1727,7 @@ function handleAnchorEdit(newAnchorText) {
 
 // ── Coach Mode panel ───────────────────────────────────────────
 function buildCoachModeHTML() {
-  const wsSummary = S.whyStatement.split(' ').slice(0,10).join(' ') + '…';
+  const wsSummary = S.whyStatement.length > 150 ? S.whyStatement.substring(0, 150) + '…' : S.whyStatement;
   const topicsHTML = COACH_TOPICS.map(t =>
     `<button class="coach-topic-btn" data-coach-topic="${t.label}">${t.label}</button>`
   ).join('');
@@ -1746,7 +1746,7 @@ document.addEventListener('click', e => {
     const topic = COACH_TOPICS.find(t => t.label === label);
     if (!topic) return;
     userSay(label);
-    const wsSummary = S.whyStatement.split(' ').slice(0,8).join(' ') + '…';
+    const wsSummary = S.whyStatement.length > 120 ? S.whyStatement.substring(0, 120) + '…' : S.whyStatement;
     const answer = topic.answer.replace(/\[WHY_STATEMENT_SUMMARY\]/g, `"${wsSummary}"`);
     botSay(`<div class="coach-tag">COACH MOMENT</div><div>${answer}</div>`, 'coach', 700);
   }
